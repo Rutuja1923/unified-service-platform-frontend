@@ -9,3 +9,12 @@ A platform connecting users with verified local workers through geo-based servic
 - **HTML**
 - **Tailwind CSS**
 - **JS**
+
+## Setup Instructions
+
+```bash
+git clone https://github.com/Rutuja1923/unified-service-platform-frontend.git
+cd usp-frontend
+npm install
+npm run dev
+```

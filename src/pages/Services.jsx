@@ -69,7 +69,6 @@ const initialServices = [
     category: "Women’s",
     image: "https://img.freepik.com/free-photo/close-up-indian-bride-henna_23-2149309570.jpg",
   },
-  // ... add all your initial services here
 ];
 
 export default function Services() {

@@ -14,7 +14,7 @@ export default function ServiceDetail() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-center p-6">
         <p className="text-gray-700 text-lg mb-4">
-          ⚠️ Service details not found.
+           Service details not found.
         </p>
         <button
           onClick={() => navigate("/services")}
@@ -26,7 +26,7 @@ export default function ServiceDetail() {
     );
   }
 
-  // ✅ service detail display
+  // service detail display
   return (
     <div className="min-h-screen bg-blue-50 py-10 px-6 flex justify-center">
       <div className="bg-white shadow-lg rounded-xl p-6 max-w-2xl w-full">

@@ -27,3 +27,29 @@ h1,h2,h3,h4,h5,h6 {
 .grid-container {
   @apply grid gap-4;
 }
+
+/* Hide scrollbar across browsers */
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none; /* Firefox */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+/* Optional: Slight snap effect for smooth feel */
+.scroll-container > * {
+  scroll-snap-align: center;
+  flex: 0 0 auto;
+}
+
+/* Add subtle hover scaling for cards */
+.service-card:hover {
+  transform: scale(1.03);
+  transition: transform 0.3s ease;
+}

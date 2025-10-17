@@ -1,40 +1,51 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import api from "../api/api";
 
 export default function Login() {
-  const { setUser } = useAuth();
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const res = await api.post("/login", formData);
-      localStorage.setItem("user", JSON.stringify(res.data));
-      setUser(res.data);
-      navigate("/");
-    } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
-    }
+    // Call backend API here
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-50">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-blue-900 mb-6">Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg"/>
-          <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg"/>
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg">Login</button>
-        </form>
-        <p className="text-center mt-4">
-          Don't have an account? <Link to="/signup" className="text-blue-600">Sign Up</Link>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 px-4">
+      <form 
+        onSubmit={handleSubmit} 
+        className="bg-gray-800 p-10 rounded-2xl shadow-lg w-full max-w-md"
+      >
+        <h2 className="text-3xl font-bold mb-6 text-center text-white">Login</h2>
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full mb-4 px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full mb-6 px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          required
+        />
+
+        <button 
+          type="submit" 
+          className="w-full py-3 bg-teal-500 hover:bg-teal-600 rounded-lg text-white font-semibold transition-all duration-300"
+        >
+          Login
+        </button>
+
+        <p className="mt-4 text-gray-400 text-sm text-center">
+          Don't have an account? <a href="/signup" className="text-teal-400 hover:underline">Sign Up</a>
         </p>
-      </div>
+      </form>
     </div>
   );
 }

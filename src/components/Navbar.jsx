@@ -13,13 +13,16 @@ export default function Navbar() {
         ServeLink
       </h1>
 
-      <div className="flex space-x-6 text-lg">
+      <div className="flex space-x-6 text-lg items-center">
         <Link to="/services" className="hover:text-blue-300">
           Services
         </Link>
-        <Link to="/jobs" className="hover:text-blue-300">
-          Jobs
-        </Link>
+        <button
+          onClick={() => navigate("/add-service")}
+          className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded-md transition"
+        >
+          Add Service
+        </button>
         <Link to="/login" className="hover:text-blue-300">
           Login
         </Link>

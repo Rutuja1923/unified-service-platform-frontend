@@ -1,225 +1,144 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ServiceCard from "../components/ServiceCard";
-import Navbar from "../components/Navbar";
+import SearchBar from "../components/Searchbar";
+import axios from "axios";
+
+// Your initial array of services
+const initialServices = [
+  {
+    _id: "1",
+    name: "Home Cleaning",
+    description: "Deep cleaning for every corner of your home.",
+    provider: "CleanCo",
+    price: "₹999",
+    category: "Household",
+    image: "https://img.freepik.com/free-photo/cleaning-service-concept_23-2149154082.jpg",
+  },
+  {
+    _id: "2",
+    name: "Electrician",
+    description: "Expert wiring, lighting, and electrical repairs.",
+    provider: "PowerFix",
+    price: "₹799",
+    category: "Household",
+    image: "https://img.freepik.com/free-photo/technician-repairing-air-conditioner_23-2149392870.jpg",
+  },
+  {
+    _id: "3",
+    name: "Plumber",
+    description: "Leak detection and pipe repair services.",
+    provider: "PipeCare",
+    price: "₹699",
+    category: "Household",
+    image: "https://img.freepik.com/free-photo/worker-repairing-water-heater_23-2149371691.jpg",
+  },
+  {
+    _id: "4",
+    name: "Carpenter",
+    description: "Furniture repair and custom woodwork.",
+    provider: "WoodWorks",
+    price: "₹899",
+    category: "Household",
+    image: "https://img.freepik.com/free-photo/carpenter-working-wood_23-2148774413.jpg",
+  },
+  {
+    _id: "5",
+    name: "Beauty Salon at Home",
+    description: "Haircuts, facials, waxing — all at your doorstep.",
+    provider: "GlamHub",
+    price: "₹499",
+    category: "Women’s",
+    image: "https://img.freepik.com/free-photo/woman-getting-facial-treatment_23-2148708701.jpg",
+  },
+  {
+    _id: "6",
+    name: "Makeup Artist",
+    description: "Professional makeup for weddings and events.",
+    provider: "StyleNGlow",
+    price: "₹1499",
+    category: "Women’s",
+    image: "https://img.freepik.com/free-photo/makeup-artist-doing-makeup-woman_23-2149243905.jpg",
+  },
+  {
+    _id: "7",
+    name: "Mehendi Artist",
+    description: "Traditional and trendy mehendi designs.",
+    provider: "HennaHearts",
+    price: "₹799",
+    category: "Women’s",
+    image: "https://img.freepik.com/free-photo/close-up-indian-bride-henna_23-2149309570.jpg",
+  },
+  // ... add all your initial services here
+];
 
 export default function Services() {
+  const [services, setServices] = useState(initialServices);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-  // Master list of services grouped by category
-  const categorizedServices = [
-    {
-      title: "🏠 Home Services",
-      description: "Essential services to keep your home running smoothly.",
-      services: [
-        {
-          _id: 1,
-          name: "Plumbing",
-          category: "Home Services",
-          description: "Fix leaks, install taps, and manage all water-related repairs.",
-          price: "₹500",
-          provider: "Ramesh Kumar",
-          image: "https://images.unsplash.com/photo-1581579186989-1211c8d174b6?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 2,
-          name: "Home Cleaning",
-          category: "Home Services",
-          description: "Professional cleaning for your entire home.",
-          price: "₹350",
-          provider: "Sunita Sharma",
-          image: "https://images.unsplash.com/photo-1581579186989-1211c8d174b6?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 3,
-          name: "Electrician",
-          category: "Home Services",
-          description: "Wiring, fan installation, and power fixes.",
-          price: "₹400",
-          provider: "Vikas Singh",
-          image: "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=60",
-        },
-      ],
-    },
-    {
-      title: "💇 Women’s Section",
-      description: "Personal care and beauty services for women.",
-      services: [
-        {
-          _id: 4,
-          name: "Salon at Home",
-          category: "Women’s Section",
-          description: "Beauty, grooming, and relaxation services at your doorstep.",
-          price: "₹800",
-          provider: "Anita Verma",
-          image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 5,
-          name: "Makeup Artist",
-          category: "Women’s Section",
-          description: "Get ready for parties, weddings, and events.",
-          price: "₹1200",
-          provider: "Meena Kapoor",
-          image: "https://images.unsplash.com/photo-1500835556837-99ac94a94552?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 6,
-          name: "Yoga & Fitness",
-          category: "Women’s Section",
-          description: "Online and in-person yoga sessions for all levels.",
-          price: "₹600",
-          provider: "Priya Mehta",
-          image: "https://images.unsplash.com/photo-1594737625785-cabc83d9db87?auto=format&fit=crop&w=800&q=60",
-        },
-      ],
-    },
-    {
-      title: "👨 Adults Section",
-      description: "Skill-based and lifestyle services for adults.",
-      services: [
-        {
-          _id: 7,
-          name: "Driving Classes",
-          category: "Adults Section",
-          description: "Learn to drive safely with certified instructors.",
-          price: "₹2000",
-          provider: "Ravi Patel",
-          image: "https://images.unsplash.com/photo-1597452485663-3b8b73f89f09?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 8,
-          name: "Cooking Classes",
-          category: "Adults Section",
-          description: "Master new recipes and cuisines at home.",
-          price: "₹1000",
-          provider: "Seema Joshi",
-          image: "https://images.unsplash.com/photo-1528715471579-d1d0cf377fde?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 9,
-          name: "Personal Finance Training",
-          category: "Adults Section",
-          description: "Learn budgeting, investing, and saving.",
-          price: "₹500",
-          provider: "Ankit Sharma",
-          image: "https://images.unsplash.com/photo-1605792657660-c9fdbfed0a1f?auto=format&fit=crop&w=800&q=60",
-        },
-      ],
-    },
-    {
-      title: "⚕️ Health & Wellness",
-      description: "Stay fit and healthy with top-rated wellness services.",
-      services: [
-        {
-          _id: 10,
-          name: "Doctor Consultation",
-          category: "Health & Wellness",
-          description: "Book online or home consultation with certified doctors.",
-          price: "₹700",
-          provider: "Dr. Arjun Kumar",
-          image: "https://images.unsplash.com/photo-1588776814546-5b3a7d63d07b?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 11,
-          name: "Physiotherapy",
-          category: "Health & Wellness",
-          description: "In-home physiotherapy for injury recovery.",
-          price: "₹900",
-          provider: "Dr. Neha Gupta",
-          image: "https://images.unsplash.com/photo-1588774069273-0c17cb0a6b4b?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 12,
-          name: "Nutritionist Consultation",
-          category: "Health & Wellness",
-          description: "Personalized diet plans and fitness guidance.",
-          price: "₹600",
-          provider: "Ritu Raj",
-          image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=60",
-        },
-      ],
-    },
-    {
-      title: "💻 Others",
-      description: "Miscellaneous and on-demand digital services.",
-      services: [
-        {
-          _id: 13,
-          name: "Website Design",
-          category: "Others",
-          description: "Custom websites for small businesses and startups.",
-          price: "₹5000",
-          provider: "TechStudio Pvt Ltd",
-          image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 14,
-          name: "Photography",
-          category: "Others",
-          description: "Event, portrait, and product photography.",
-          price: "₹1500",
-          provider: "Rahul Photography",
-          image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=60",
-        },
-        {
-          _id: 15,
-          name: "Freelance Tutoring",
-          category: "Others",
-          description: "Online classes for school and college subjects.",
-          price: "₹800",
-          provider: "Komal Joshi",
-          image: "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=60",
-        },
-      ],
-    },
-  ];
+  // Fetch services from backend on mount
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/services")
+      .then((res) => {
+        if (res.data.length > 0) {
+          // Append backend services after initialServices
+          setServices([...initialServices, ...res.data]);
+        }
+      })
+      .catch(() => console.log("Backend fetch failed — showing local data."));
+  }, []);
 
-  // Filter logic for search
-  const filteredCategories = categorizedServices.map((category) => ({
-    ...category,
-    services: category.services.filter(
-      (s) =>
-        s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.category.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-  }));
+  const handleCardClick = (service) => {
+    navigate(`/service/${service._id}`, { state: { service } });
+  };
+
+  const filteredServices = services.filter((s) =>
+    s.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const categories = [...new Set(filteredServices.map((s) => s.category))];
 
   return (
-    <div className="min-h-screen bg-blue-50">
-      <Navbar />
+    <div className="min-h-screen bg-blue-50 py-10 px-6">
+      <h1 className="text-4xl font-bold text-center text-blue-900 mb-8">
+        Available Services
+      </h1>
 
       {/* Search Bar */}
-      <div className="flex justify-center mt-6">
-        <input
-          type="text"
-          placeholder="🔍 Search for a service..."
-          className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+      <div className="max-w-md mx-auto mb-8">
+        <SearchBar
+          placeholder="Search for a service..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      {/* Services Sections */}
-      <div className="px-6 md:px-12 py-10 space-y-12">
-        {filteredCategories.map((category) => (
-          <div key={category.title}>
-            <h2 className="text-3xl font-bold text-blue-900 mb-2">
-              {category.title}
-            </h2>
-            <p className="text-gray-600 mb-6">{category.description}</p>
+      {categories.map((cat) => {
+        const filtered = filteredServices.filter((s) => s.category === cat);
+        if (filtered.length === 0) return null;
 
-            {category.services.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {category.services.map((service) => (
-                  <ServiceCard key={service._id} service={service} />
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">No matching services found.</p>
-            )}
+        return (
+          <div key={cat} className="mb-10">
+            <h2 className="text-2xl font-semibold text-blue-800 mb-4 border-b-2 border-blue-300 inline-block">
+              {cat} Services
+            </h2>
+
+            <div className="scroll-container flex space-x-4 overflow-x-auto pb-4">
+              {filtered.map((service) => (
+                <div
+                  key={service._id + Math.random()} // avoid duplicate _id clash
+                  onClick={() => handleCardClick(service)}
+                  className="cursor-pointer min-w-[280px] snap-center"
+                >
+                  <ServiceCard service={service} />
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }

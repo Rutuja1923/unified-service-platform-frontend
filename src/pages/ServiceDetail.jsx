@@ -1,61 +1,169 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
-import api from "../api/api";
-import BookingModal from "../components/BookingModal";
-import { AuthContext } from "../contexts/AuthContext";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@/contexts/AuthContext";
+import { serviceData } from "./data";
 
 export default function ServiceDetail() {
-  const { id } = useParams();
-  const [service, setService] = useState(null);
-  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await api.get(`/services/${id}`);
-        setService(res.data);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    fetch();
-  }, [id]);
+  // Replace this with your current service id logic
+  const serviceId = 1;
+  const service = serviceData[serviceId];
 
-  if (!service) return <div>Loading...</div>;
+  if (!service) return <p>Service not found.</p>;
+
+  const handleAction = (actionPath) => {
+    if (!user) {
+      // If user is not logged in, prompt them to login or register
+      const confirmLogin = window.confirm(
+        "You need to login or register to continue. Do you want to login now?"
+      );
+      if (confirmLogin) navigate("/login");
+      return;
+    }
+    // If logged in, navigate to the appropriate page
+    navigate(actionPath);
+  };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow mt-6">
-      <h2 className="text-2xl font-bold">{service.title}</h2>
-      <p className="text-sm text-gray-600">
-        {service.category} • {service.location}
-      </p>
-      <p className="mt-4">{service.description}</p>
-      <div className="mt-6 flex justify-between items-center">
-        <div className="text-2xl font-bold">₹{service.price}</div>
-        <div>
-          {!user ? (
-            <div className="text-sm">Log in to book</div>
-          ) : (
-            <button
-              onClick={() => setOpen(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+    <div
+      style={{
+        background: "#f4f6f9",
+        minHeight: "100vh",
+        paddingBottom: "50px",
+      }}
+    >
+      <div style={{ padding: "20px 40px" }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            color: "#1976d2",
+            border: "none",
+            background: "none",
+            cursor: "pointer",
+            fontSize: "18px",
+            fontWeight: "bold",
+          }}
+        >
+          ← Back
+        </button>
+      </div>
+
+      <div style={{ textAlign: "center", marginBottom: "40px" }}>
+        <h1
+          style={{ color: "#1976d2", marginBottom: "10px", fontSize: "2rem" }}
+        >
+          {`${service.name} Service Providers`}
+        </h1>
+        {/* <p
+          style={{
+            color: "#555",
+            fontSize: "1.1rem",
+            maxWidth: "700px",
+            margin: "0 auto",
+          }}
+        >
+          {service.desc}
+        </p> */}
+      </div>
+
+      <div style={{ padding: "0 40px" }}>
+        <div
+          style={{
+            display: "flex",
+            overflowX: "auto",
+            gap: "30px",
+            paddingBottom: "30px",
+            scrollSnapType: "x mandatory",
+          }}
+        >
+          {service.providers.map((p) => (
+            <div
+              key={p.id}
+              style={{
+                flex: "0 0 350px",
+                background: "#fff",
+                borderRadius: "16px",
+                boxShadow: "0 6px 18px rgba(0,0,0,0.1)",
+                padding: "25px",
+                scrollSnapAlign: "center",
+                textAlign: "center",
+              }}
             >
-              Book Now
-            </button>
-          )}
+              <h3>
+                {p.name}{" "}
+                {p.verified && <span style={{ color: "green" }}>✔</span>}
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.95rem" }}>{p.location}</p>
+
+              {p.services && p.services.length > 0 && (
+                <p
+                  style={{
+                    color: "#444",
+                    fontSize: "0.95rem",
+                    margin: "5px 0 15px",
+                  }}
+                >
+                  Services: {p.services.join(", ")}
+                </p>
+              )}
+
+              <p
+                style={{
+                  fontWeight: "bold",
+                  color: "#1976d2",
+                  marginTop: "5px",
+                }}
+              >
+                {p.cost}
+              </p>
+              <p style={{ color: "#444", marginBottom: "15px" }}>
+                ⭐ {p.rating} | {p.completed} jobs completed
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                <button
+                  onClick={() => handleAction(`/provider/${p.id}`)}
+                  style={{
+                    background: "#ffa500",
+                    color: "white",
+                    border: "none",
+                    padding: "10px 25px",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Explore Profile
+                </button>
+                <button
+                  onClick={() => handleAction(`/book/${p.id}`)} // Or open your booking modal
+                  style={{
+                    background: "#1976d2",
+                    color: "white",
+                    border: "none",
+                    padding: "12px 30px",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Book Now
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      {open && (
-        <BookingModal
-          service={service}
-          onClose={() => setOpen(false)}
-          onBooked={() => {
-            setOpen(false);
-            alert("Booked!");
-          }}
-        />
-      )}
     </div>
   );
 }
